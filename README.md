@@ -154,6 +154,7 @@ _Use ref to access the element and call the following functions to export image_
 | Props                        | Expected datatype                                                                                                                                |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | eraseMode(boolean)           | Switch to eraser mode by passing true. You can switch back to pen mode by passing false                                                          |
+| strokeMode(boolean)          | Allow drawing to canvas or not. You can switch access by passing in corresponding value (true or false)                                          |
 | clearCanvas()                | Clears the canvas.                                                                                                                               |
 | resetCanvas()                | Resets the canvas and clears the undo/redo stack along with it.                                                                                  |
 | undo()                       | Undo the last action.                                                                                                                            |

@@ -26,6 +26,7 @@ export interface ReactSketchCanvasProps {
 
 export interface ReactSketchCanvasRef {
   eraseMode: (erase: boolean) => void;
+  strokeMode: (stroke: boolean) => void;
   clearCanvas: () => void;
   undo: () => void;
   redo: () => void;
@@ -65,6 +66,7 @@ export const ReactSketchCanvas = React.forwardRef<
 
   const svgCanvas = React.createRef<CanvasRef>();
   const [drawMode, setDrawMode] = React.useState<boolean>(true);
+  const [allowStroke, setAllowStroke] = React.useState<boolean>(true);
   const [isDrawing, setIsDrawing] = React.useState<boolean>(false);
   const [resetStack, setResetStack] = React.useState<CanvasPath[]>([]);
   const [undoStack, setUndoStack] = React.useState<CanvasPath[]>([]);
@@ -92,6 +94,9 @@ export const ReactSketchCanvas = React.forwardRef<
   React.useImperativeHandle(ref, () => ({
     eraseMode: (erase: boolean): void => {
       setDrawMode(!erase);
+    },
+    strokeMode: (stroke: boolean): void => {
+      setAllowStroke(stroke);
     },
     clearCanvas: (): void => {
       setResetStack([...currentPaths]);
@@ -188,25 +193,26 @@ export const ReactSketchCanvas = React.forwardRef<
   }));
 
   const handlePointerDown = (point: Point): void => {
-    setIsDrawing(true);
-    setUndoStack([]);
+    if (allowStroke) {
+      setIsDrawing(true);
+      setUndoStack([]);
 
-    let stroke: CanvasPath = {
-      drawMode: drawMode,
-      strokeColor: drawMode ? strokeColor : '#000000', // Eraser using mask
-      strokeWidth: drawMode ? strokeWidth : eraserWidth,
-      paths: [point],
-    };
-
-    if (withTimestamp) {
-      stroke = {
-        ...stroke,
-        startTimestamp: Date.now(),
-        endTimestamp: 0,
+      let stroke: CanvasPath = {
+        drawMode: drawMode,
+        strokeColor: drawMode ? strokeColor : '#000000', // Eraser using mask
+        strokeWidth: drawMode ? strokeWidth : eraserWidth,
+        paths: [point],
       };
-    }
 
-    setCurrentPaths((currentPaths) => [...currentPaths, stroke]);
+      if (withTimestamp) {
+        stroke = {
+          ...stroke,
+          startTimestamp: Date.now(),
+          endTimestamp: 0,
+        };
+      }
+      setCurrentPaths((currentPaths) => [...currentPaths, stroke]);
+    }
   };
 
   const handlePointerMove = (point: Point): void => {
