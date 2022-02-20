@@ -33,6 +33,7 @@ export interface ReactSketchCanvasRef {
   exportImage: (imageType: ExportImageType) => Promise<string>;
   exportSvg: () => Promise<string>;
   exportPaths: () => Promise<CanvasPath[]>;
+  getLastPath: () => CanvasPath;
   loadPaths: (paths: CanvasPath[]) => void;
   getSketchingTime: () => Promise<number>;
   resetCanvas: () => void;
@@ -158,6 +159,9 @@ export const ReactSketchCanvas = React.forwardRef<
           reject(e);
         }
       });
+    },
+    getLastPath: (): CanvasPath => {
+      return currentPaths.pop()!;
     },
     loadPaths: (paths: CanvasPath[]): void => {
       setCurrentPaths((currentPaths) => [...currentPaths, ...paths]);
