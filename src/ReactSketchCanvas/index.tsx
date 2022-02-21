@@ -161,7 +161,8 @@ export const ReactSketchCanvas = React.forwardRef<
       });
     },
     getLastPath: (): CanvasPath | null => {
-      return currentPaths.pop() || undoStack.pop() || null;
+      if (currentPaths.length === 0) return null;
+      return currentPaths[currentPaths.length - 1];
     },
     loadPaths: (paths: CanvasPath[]): void => {
       setCurrentPaths((currentPaths) => [...currentPaths, ...paths]);
